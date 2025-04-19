@@ -1,0 +1,67 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: set
+spec:
+  selector:
+    matchLabels:
+      run: mysql
+  serviceName: mysql
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        run: mysql
+    spec:
+      containers:
+      - name: mysql
+        image: mysql:latest
+        ports:
+        - containerPort: 3306
+        volumeMounts:
+        - name: mysql-config
+          mountPath: /etc/mysql/conf.d
+        - name: mysql-data
+          mountPath: /var/lib/mysql 
+        env:
+        - name: MYSQL_ROOT_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret
+              key: mysql_root_password
+        - name: MYSQL_DATABASE
+          valueFrom:
+            configMapKeyRef:
+              name: myapp
+              key: mysql_database
+        - name: MYSQL_USER
+          valueFrom:
+            configMapKeyRef:
+              name: myapp
+              key: mysql_user
+        - name: MYSQL_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              name: mysecret  
+              key: mysql_password
+      affinity:
+       nodeAffinity:
+        requiredDuringSchedulingIgnoredDuringExecution:
+          nodeSelectorTerms:
+          - matchExpressions:
+              - key: "app"
+                operator: "In"
+                values:
+                  - "mysql"
+      tolerations:
+      - key: "for"
+        operator: "Equal"
+        value: "special"
+        effect: "NoSchedule"
+      volumes:
+      - name: mysql-config
+        configMap:
+          name: myapp  
+      - name: mysql-data
+        persistentVolumeClaim:
+          claimName: mypvc

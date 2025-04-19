@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Pod
+metadata:
+    name: vol-host
+spec:
+    containers:
+        - name: busybox
+          image: busybox:1.28
+          command: ['sh', '-c', 'echo "The app is running!" && tail -f /dev/null']
+          volumeMounts:
+            - name: vol-1
+              mountPath: /etc/config/
+    
+    volumes:
+        - name: vol-1
+          configMap:
+            name: myapp
+            items:
+                - key: wordpress_db_host
+                  path: db_host.conf

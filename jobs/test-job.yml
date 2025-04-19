@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: myjob
+spec:
+  #ttlSecondsAfterFinished: 100
+  template:
+    spec:
+      containers:
+      - name: process
+        image: busybox
+        command: ["sh", "-c", "echo Processing data...; sleep 10; echo Data processed!"]
+      restartPolicy: OnFailure
+  backoffLimit: 4

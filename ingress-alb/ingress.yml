@@ -1,0 +1,30 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: myingress
+  labels:
+    name: myingress
+  annotations:
+    kubernetes.io/ingress.class: "alb"
+    alb.ingress.kubernetes.io/scheme: internet-facing
+    alb.ingress.kubernetes.io/target-type: ip
+    # nginx.ingress.kubernetes.io/rewrite-target: /
+spec:
+  rules:
+  - host: http://k8s-default-myingres-291814ec0a-1141331165.us-east-1.elb.amazonaws.com
+    http:
+      paths:
+      - path: /apache
+        pathType: Prefix
+        backend:
+          service:
+            name: apache
+            port:
+              number: 80
+      - path: /nginx
+        pathType: Prefix
+        backend:
+          service:
+            name: nginx
+            port:
+              number: 80
