@@ -1,0 +1,24 @@
+{{- range .Values.replicas}}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ . }}
+  labels:
+  {{- include "all.labels" $ | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: apache
+  template:
+    metadata:
+      labels:
+        app: apache
+    spec:
+      containers:
+        - name: apache
+          image: {{ $.Values.image.repository }}
+          ports:
+            - containerPort: {{ $.Values.port }}
+{{- end }}

@@ -1,0 +1,9 @@
+replicaCount: 1
+image:
+  repository: httpd:latest
+port: 81
+service:
+  enabled: true
+replicas:
+  - web-deploy
+  - app-deploy

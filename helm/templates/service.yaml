@@ -1,0 +1,12 @@
+{{ if .Values.service.enabled }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: service
+spec:
+  selector:
+    app: apache
+  ports:
+  - port: {{ .Values.port }}
+    targetPort: {{ .Values.port }}
+{{ end }}
